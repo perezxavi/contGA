@@ -73,25 +73,26 @@ def crossover(parents, offspring_size):
 	
 	return offspring
 
-def mutation(offspring_crossover):
+def mutation( pop, mutation_rate, mutation_step):
 	# Mutation changes a single gene in each offspring randomly.
-	global num_weights
-	for idx in range(offspring_crossover.shape[0]):
+	num_weights=pop.shape[1]
+	for idx in range(pop.shape[0]):
 		for w in range(num_weights):
-			if numpy.random.uniform(0, 1.0) > 0.95:
+			if numpy.random.uniform(0, 1.0) > mutation_rate:
 				# The random value to be added to the gene.
-				random_value = numpy.random.uniform(-10.0, 10.0)
-				offspring_crossover[idx, w] = offspring_crossover[idx, w] + random_value
-	return offspring_crossover
+				random_value = numpy.random.uniform(-mutation_step, mutation_step)
+				pop[idx, w] = pop[idx, w] + random_value
+	return pop
 
 
 
-def continuous_genetic_algorithm(equation_inputs, sol_per_pop, num_parents, num_generations
+def continuous_genetic_algorithm(equation_inputs, dom, sol_per_pop, num_parents, num_generations, mutation_rate, mutation_step):
 
 	# Defining the population size.
+	num_weights=len(equation_inputs)
 	pop_size = (sol_per_pop,num_weights) 
 	#Creating the initial population.
-	new_population = numpy.random.uniform(low=-1000.0, high=1000.0, size=pop_size)
+	new_population = numpy.random.uniform(low=dom[0], high=dom[1], size=pop_size)
 
 	best_outputs = []
 
@@ -110,7 +111,7 @@ def continuous_genetic_algorithm(equation_inputs, sol_per_pop, num_parents, num_
 		parents = select_parents(new_population, fitness, num_parents)
 	 
 		offspring_crossover = crossover(parents, offspring_size=(num_parents, num_weights))
-		offspring_mutation = mutation(offspring_crossover)
+		offspring_mutation = mutation(offspring_crossover, mutation_rate, mutation_step)
 
 		new_population[0:elite.shape[0], :] = elite
 		new_population[elite.shape[0]:, :] = offspring_mutation
@@ -121,4 +122,4 @@ def continuous_genetic_algorithm(equation_inputs, sol_per_pop, num_parents, num_
 
 	return fitness, new_population[best_match_idx, :]
 
-
+continuous_genetic_algorithm([1,1,1,2],(-10,10),1000, 990, 300, 0.95, 1.0) 
