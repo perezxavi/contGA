@@ -6,7 +6,7 @@ def ind_fitness(equation_inputs, ind):
 	return numpy.sum(numpy.power(ind*equation_inputs, 2))
 
 def pop_fitness(equation_inputs, pop):
-	# Calculating the fitness value of each solution in the current population.
+	
 	fitness= numpy.ndarray(len(pop))
 	i=0
 	for ind in pop:
@@ -15,7 +15,6 @@ def pop_fitness(equation_inputs, pop):
 	return fitness
 
 def select_parents(pop, fitness, num_parents):
-	# Selecting the best individuals in the current generation as parents for producing the offspring of the next generation.
 	parents = numpy.empty((num_parents, pop.shape[1]))
 	
 	for parent_num in range(num_parents):
@@ -30,7 +29,7 @@ def select_parents(pop, fitness, num_parents):
 	return parents
 
 def select_elite(pop, fitness, num_ind):
-	# Selecting the best individuals in the current generation as parents for producing the offspring of the next generation.
+	
 	elite = numpy.empty((num_ind, pop.shape[1]))
 	
 	aux_fitness=fitness[:]
@@ -51,35 +50,25 @@ def select_elite(pop, fitness, num_ind):
 
 def crossover(parents, offspring_size):
 	offspring = numpy.empty(offspring_size)
-	# The point at which crossover takes place between two parents. Usually, it is at the center.
 	
 	for k in range(0,offspring_size[0],2):
 		crossover_point = numpy.random.randint(low=1, high=offspring_size[0])
-		#print(crossover_point)
-		# Index of the first parent to mate.
 		parent1_idx = k
-		# Index of the second parent to mate.
 		parent2_idx = parent1_idx+1
-		# The new offspring will have its first half of its genes taken from the first parent.
 		offspring[k, :crossover_point] = parents[parent1_idx, 0:crossover_point]
-		# The new offspring will have its second half of its genes taken from the second parent.
 		offspring[k, crossover_point:] = parents[parent2_idx, crossover_point:]
 
-		# The new offspring will have its first half of its genes taken from the first parent.
 		offspring[k+1, :crossover_point] = parents[parent2_idx, 0:crossover_point]
-		# The new offspring will have its second half of its genes taken from the second parent.
 		offspring[k+1, crossover_point:] = parents[parent1_idx, crossover_point:]
 
 	
 	return offspring
 
 def mutation( pop, mutation_rate, mutation_step):
-	# Mutation changes a single gene in each offspring randomly.
 	num_weights=pop.shape[1]
 	for idx in range(pop.shape[0]):
 		for w in range(num_weights):
 			if numpy.random.uniform(0, 1.0) > mutation_rate:
-				# The random value to be added to the gene.
 				random_value = numpy.random.uniform(-mutation_step, mutation_step)
 				pop[idx, w] = pop[idx, w] + random_value
 	return pop
@@ -88,26 +77,21 @@ def mutation( pop, mutation_rate, mutation_step):
 
 def continuous_genetic_algorithm(equation_inputs, dom, sol_per_pop, num_parents, num_generations, mutation_rate, mutation_step):
 
-	# Defining the population size.
 	num_weights=len(equation_inputs)
 	pop_size = (sol_per_pop,num_weights) 
-	#Creating the initial population.
 	new_population = numpy.random.uniform(low=dom[0], high=dom[1], size=pop_size)
 
 	best_outputs = []
 
 	for generation in range(num_generations):
 	
-		# Measuring the fitness of each chromosome in the population.
 		fitness = pop_fitness(equation_inputs, new_population)
 
 		best_outputs.append(numpy.min(fitness))
-		# The best result in the current iteration.
-		print("Best result : ", numpy.min(fitness))
+		
 	
 		elite = select_elite(new_population, fitness, sol_per_pop-num_parents)
 
-		# Selecting the best parents in the population.
 		parents = select_parents(new_population, fitness, num_parents)
 	 
 		offspring_crossover = crossover(parents, offspring_size=(num_parents, num_weights))
@@ -119,7 +103,8 @@ def continuous_genetic_algorithm(equation_inputs, dom, sol_per_pop, num_parents,
 
 	fitness = pop_fitness(equation_inputs, new_population)
 	best_match_idx = numpy.where(fitness == numpy.min(fitness))
+	best_match_idx=best_match_idx[0][0]
 
-	return fitness, new_population[best_match_idx, :]
+	return fitness[best_match_idx], new_population[best_match_idx]
 
-continuous_genetic_algorithm([1,1,1,2],(-10,10),1000, 990, 300, 0.95, 1.0) 
+print(continuous_genetic_algorithm([1,1,1,2],(-10,10),100, 98, 300, 0.95, 1.0) )
