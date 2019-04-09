@@ -74,9 +74,18 @@ def mutation( pop, mutation_rate, mutation_step):
 	return pop
 
 
-
 def continuous_genetic_algorithm(equation_inputs, dom, sol_per_pop, num_parents, num_generations, mutation_rate, mutation_step):
+	"""
 
+	:param equation_inputs:
+	:param dom:
+	:param sol_per_pop:
+	:param num_parents:
+	:param num_generations:
+	:param mutation_rate:
+	:param mutation_step:
+	:return:
+	"""
 	num_weights=len(equation_inputs)
 	pop_size = (sol_per_pop,num_weights) 
 	new_population = numpy.random.uniform(low=dom[0], high=dom[1], size=pop_size)
@@ -106,5 +115,3 @@ def continuous_genetic_algorithm(equation_inputs, dom, sol_per_pop, num_parents,
 	best_match_idx=best_match_idx[0][0]
 
 	return fitness[best_match_idx], new_population[best_match_idx]
-
-print(continuous_genetic_algorithm([1,1,1,2],(-10,10),100, 98, 300, 0.95, 1.0) )
