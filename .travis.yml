@@ -6,7 +6,8 @@ python:
 git:
   depth: false
 install:
-  - pip install numpy coveralls
+  - pip install coveralls
+  - pip install numpy matplotlib
 script:
   - python test_ga.py
   - coveralls
